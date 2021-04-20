@@ -1,4 +1,4 @@
-import { AccessTokenAuth0, Auth0Params } from './types';
+import { AccessTokenAuth0 } from './types';
 import fetch from 'node-fetch';
 import { nanoid } from 'nanoid';
 
