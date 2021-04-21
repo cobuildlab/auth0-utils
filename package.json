@@ -4,7 +4,7 @@
   "description": "This is package to deal with common scenarios working with auth0 platform",
   "main": "index.js",
   "scripts": {
-    "test": "jest --collect-coverage",
+    "test": "jest --collect-coverage --passWithNoTests",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "eslint --fix"
