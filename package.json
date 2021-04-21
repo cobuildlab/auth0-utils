@@ -1,6 +1,6 @@
 {
   "name": "@cobuildlab/8base-auth0",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "This is package to deal with common scenarios working with auth0 platform",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
