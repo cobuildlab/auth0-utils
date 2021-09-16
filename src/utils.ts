@@ -131,9 +131,9 @@ export const fetchAccessTokenOnAuth0 = async (
  * @description Request email verification from Auth0.
  *
  * @param {string} auth_domain - Auth0's auth domain.
- * @param {string} access_token Auth0's management api access token (see {@linkcode fetchAccessTokenOnAuth0})
+ * @param {string} access_token - Auth0's management api access token (see {@linkcode fetchAccessTokenOnAuth0}).
  * @param {string} user_id - Authenticated user ID.
- * @param {string} client_id Auth0's machine client ID.
+ * @param {string} client_id - Auth0's machine client ID.
  * @param {string} provider - User's authentication provider.
  *
  * @returns {Promise<void>} - Gracefully exit if job was successfully created.
@@ -169,7 +169,7 @@ export const sendAuth0EmailVerification = async (
     if (response.status !== 201) {
       throw new Error(`Request failed with status code ${response.status}`);
     }
-  } catch (e: any) {
+  } catch (e) {
     throw new Error(e);
   }
 };
