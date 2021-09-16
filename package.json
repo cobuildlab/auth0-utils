@@ -1,6 +1,6 @@
 {
-  "name": "@cobuildlab/8base-auth0",
-  "version": "0.0.3",
+  "name": "@cobuildlab/auth0-utils",
+  "version": "0.1.0",
   "description": "This is package to deal with common scenarios working with auth0 platform",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cobuildlab/8base-auth0.git"
+    "url": "git+https://github.com/cobuildlab/auth0-utils.git"
   },
   "keywords": [
     "8base",
@@ -25,9 +25,9 @@
   "author": "Ragomez33",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cobuildlab/8base-auth0/issues"
+    "url": "https://github.com/cobuildlab/auth0-utils/issues"
   },
-  "homepage": "https://github.com/cobuildlab/8base-auth0#readme",
+  "homepage": "https://github.com/cobuildlab/auth0-utils#readme",
   "husky": {
     "hooks": {
       "pre-commit": "npx lint-staged",
