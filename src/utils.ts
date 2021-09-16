@@ -147,29 +147,25 @@ export const sendAuth0EmailVerification = async (
   client_id: string,
   provider: string,
 ): Promise<void> => {
-  try {
-    const response = await fetch(
-      `https://${auth_domain}/api/v2/jobs/verification-email`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify({
-          user_id: `${provider}|${user_id}`,
-          client_id,
-          identity: {
-            user_id,
-            provider,
-          },
-        }),
+  const response = await fetch(
+    `https://${auth_domain}/api/v2/jobs/verification-email`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${access_token}`,
       },
-    );
+      body: JSON.stringify({
+        user_id: `${provider}|${user_id}`,
+        client_id,
+        identity: {
+          user_id,
+          provider,
+        },
+      }),
+    },
+  );
 
-    if (response.status !== 201) {
-      throw new Error(`Request failed with status code ${response.status}`);
-    }
-  } catch (e) {
-    throw new Error(e);
+  if (response.status !== 201) {
+    throw new Error(`Request failed with status code ${response.status}`);
   }
 };
