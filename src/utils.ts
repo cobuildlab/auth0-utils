@@ -164,8 +164,4 @@ export const sendAuth0EmailVerification = async (
       }),
     },
   );
-
-  if (response.status !== 201) {
-    throw new Error(`Request failed with status code ${response.status}`);
-  }
 };
