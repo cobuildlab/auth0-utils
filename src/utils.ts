@@ -152,6 +152,7 @@ export const sendAuth0EmailVerification = async (
     {
       method: 'POST',
       headers: {
+        'content-type': 'application/json',
         Authorization: `Bearer ${access_token}`,
       },
       body: JSON.stringify({
