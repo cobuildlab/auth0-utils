@@ -126,3 +126,50 @@ export const fetchAccessTokenOnAuth0 = async (
     throw new Error(error);
   }
 };
+
+/**
+ * @description Request email verification from Auth0.
+ *
+ * @param {string} auth_domain - Auth0's auth domain.
+ * @param {string} access_token Auth0's management api access token (see {@linkcode fetchAccessTokenOnAuth0})
+ * @param {string} user_id - Authenticated user ID.
+ * @param {string} client_id Auth0's machine client ID.
+ * @param {string} provider - User's authentication provider.
+ *
+ * @returns {Promise<void>} - Gracefully exit if job was successfully created.
+ *
+ * @private
+ */
+export const sendAuth0EmailVerification = async (
+  auth_domain: string,
+  access_token: string,
+  user_id: string,
+  client_id: string,
+  provider: string,
+): Promise<void> => {
+  try {
+    const response = await fetch(
+      `https://${auth_domain}/api/v2/jobs/verification-email`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({
+          user_id: `${provider}|${user_id}`,
+          client_id,
+          identity: {
+            user_id,
+            provider,
+          },
+        }),
+      },
+    );
+
+    if (response.status !== 201) {
+      throw new Error(`Request failed with status code ${response.status}`);
+    }
+  } catch (e: any) {
+    throw new Error(e);
+  }
+};
