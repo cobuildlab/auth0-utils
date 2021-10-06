@@ -174,35 +174,31 @@ export const sendAuth0EmailVerification = async (
 /**
  * This action updates an auth0 user.
  *
- * @param {string} userId - ID of the user to be updated.
+ * @param {string} user_id - ID of the user to be updated.
  * @param {string} access_token - Auth0 access token. Required.
- * @param {string} auth0UsersUrl - This is the url of the auth0 project, you can get this in the doc of auth0. Example: https://your-app.us.auth0.com/api/v2/users.
+ * @param {string} auth_domain - This is the url of the auth0 project, you can get this in the doc of auth0. Example: https://your-app.us.auth0.com/api/v2/users.
  * @param {Object} data - Data to be updated.
  * @returns {Promise<any>} - Success data if user is updated.
  * @private
  */
 export const updateAuth0User = async (
-  userId: string,
+  user_id: string,
   access_token: string,
-  auth0UsersUrl: string,
+  auth_domain: string,
   data: any,
 ): Promise<any> => {
   if (!access_token) {
     throw new Error('No valid access token');
   }
 
-  if (!auth0UsersUrl) {
-    throw new Error('No valid auth0 users url');
-  }
-
-  if (auth0UsersUrl[auth0UsersUrl.length - 1] !== '/') {
-    auth0UsersUrl += '/';
+  if (!auth_domain) {
+    throw new Error('No valid auth0 auth domain');
   }
 
   let userResponse;
 
   try {
-    userResponse = await fetch(auth0UsersUrl + userId, {
+    userResponse = await fetch(`https://${auth_domain}/api/v2/users/${user_id}`, {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json',
