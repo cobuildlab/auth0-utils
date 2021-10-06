@@ -170,3 +170,59 @@ export const sendAuth0EmailVerification = async (
     throw new Error(`Request failed with status code ${response.status}`);
   }
 };
+
+/**
+ * This action updates an auth0 user.
+ *
+ * @param {string} userId - ID of the user to be updated.
+ * @param {string} access_token - Auth0 access token. Required.
+ * @param {string} auth0UsersUrl - This is the url of the auth0 project, you can get this in the doc of auth0. Example: https://your-app.us.auth0.com/api/v2/users.
+ * @param {Object} data - Data to be updated.
+ * @returns {Promise<any>} - Success data if user is updated.
+ * @private
+ */
+export const updateAuth0User = async (
+  userId: string,
+  access_token: string,
+  auth0UsersUrl: string,
+  data: any,
+): Promise<any> => {
+  if (!access_token) {
+    throw new Error('No valid access token');
+  }
+
+  if (!auth0UsersUrl) {
+    throw new Error('No valid auth0 users url');
+  }
+
+  if (auth0UsersUrl[auth0UsersUrl.length - 1] !== '/') {
+    auth0UsersUrl += '/';
+  }
+
+  let userResponse;
+
+  try {
+    userResponse = await fetch(auth0UsersUrl + userId, {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: 'Bearer ' + access_token,
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.log('ERROR UPDATING AUTH0 USER \n', error);
+    throw new Error(error);
+  }
+
+  userResponse = await userResponse.json();
+
+  if (!userResponse) {
+    console.log('UpdateUserError', userResponse);
+    console.log('ERROR UPDATING AUTH0 USER \n');
+    throw new Error('ERROR UPDATING AUTH0 USER');
+  }
+
+  console.log('User auth0 Update Success', userResponse);
+  return userResponse;
+};
