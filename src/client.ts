@@ -19,7 +19,7 @@ class Auth0Client {
     this.clienSecret = params.clienSecret;
   }
 
-  async setup(): Promise<void> {
+  private async setupAccesToken(): Promise<void> {
     if (this.accessToken) {
       return;
     }
@@ -55,7 +55,7 @@ class Auth0Client {
    * @returns User.
    */
   async createAuth0User(email: string, connection: string): Promise<Auth0User> {
-    await this.setup();
+    await this.setupAccesToken();
 
     const password = nanoid(10);
     if (!this.accessToken) {
