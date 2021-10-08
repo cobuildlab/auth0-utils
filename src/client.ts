@@ -20,6 +20,9 @@ class Auth0Client {
   }
 
   async setup(): Promise<void> {
+    if (this.accessToken) {
+      return;
+    }
     try {
       const response = await fetch(`https://${this.domain}/oauth/token`, {
         method: 'POST',
@@ -52,6 +55,8 @@ class Auth0Client {
    * @returns User.
    */
   async createAuth0User(email: string, connection: string): Promise<Auth0User> {
+    await this.setup();
+
     const password = nanoid(10);
     if (!this.accessToken) {
       throw new Error('No valid access token');

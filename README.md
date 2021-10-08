@@ -29,15 +29,6 @@ const auth0Client = createAuth0Client({
 Then before using the client it need to be setup
 
 ```ts
-// after initialization
-// this functions fetch the access token for the client to make requests.
-// and its a async operation
-await auth0Client.setup();
-```
-
-Then before using the client it need to be setup
-
-```ts
 // Creates a user with their email and database connection to save it
 const auth0User = auth0Client.createAuth0User(
   'test@test.com',
