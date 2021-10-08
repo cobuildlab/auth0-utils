@@ -1,6 +1,6 @@
 {
   "name": "@cobuildlab/auth0-utils",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "This is package to deal with common scenarios working with auth0 platform",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
