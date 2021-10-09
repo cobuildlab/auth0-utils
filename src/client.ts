@@ -120,11 +120,14 @@ class Auth0Client {
    * @param params.ttlSec - Number of seconds for which the ticket is valid before expiration. If unspecified or set to 0, this value defaults to 432000 seconds (5 days).
    * @param params.clientId - ID of the client. If provided for tenants using New Universal Login experience, the user will be prompted to redirect to the default login route of the corresponding application once the ticket is used. See Configuring Default Login Routes for more details.
 Conflicts with: result_url
+   * @param params.userId - user_id of for whom the ticket should be created.
+Conflicts with: connection_id, email
    * @returns User.
    */
   async getResetPasswordLink(params: {
-    connectionId: string;
-    email: string;
+    connectionId?: string;
+    userId?: string;
+    email?: string;
     resultUrl?: string;
     ttlSec?: number;
     clientId?: string;
@@ -142,8 +145,9 @@ Conflicts with: result_url
         Authorization: 'Bearer ' + this.accessToken,
       },
       body: JSON.stringify({
+        user_id: params.userId,
         result_url: params.resultUrl,
-        client_id: params.resultUrl ? undefined : this.clientId,
+        client_id: params.clientId,
         connection_id: params.connectionId,
         email: params.email,
         ttl_sec: params.ttlSec ?? 0,
