@@ -131,7 +131,7 @@ Conflicts with: connection_id, email
     resultUrl?: string;
     ttlSec?: number;
     clientId?: string;
-  }): Promise<string> {
+  }): Promise<unknown> {
     await this.setupAccesToken();
 
     if (!this.accessToken) {
@@ -154,9 +154,9 @@ Conflicts with: connection_id, email
         mark_email_as_verified: true,
       }),
     });
-    const { ticket } = await tikectResponse.json();
+    const data = await tikectResponse.json();
 
-    return ticket;
+    return data;
   }
 }
 
