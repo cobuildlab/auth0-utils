@@ -137,24 +137,28 @@ Conflicts with: connection_id, email
     if (!this.accessToken) {
       throw new Error('No valid access token');
     }
-
+    const request = {
+      user_id: params.userId,
+      result_url: params.resultUrl,
+      client_id: params.clientId,
+      connection_id: params.connectionId,
+      email: params.email,
+      ttl_sec: params.ttlSec ?? 0,
+      mark_email_as_verified: true,
+    };
     const tikectResponse = await fetch(`https://${this.domain}/api/v2/users`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: 'Bearer ' + this.accessToken,
       },
-      body: JSON.stringify({
-        user_id: params.userId,
-        result_url: params.resultUrl,
-        client_id: params.clientId,
-        connection_id: params.connectionId,
-        email: params.email,
-        ttl_sec: params.ttlSec ?? 0,
-        mark_email_as_verified: true,
-      }),
+      body: JSON.stringify(request),
     });
     const data = await tikectResponse.json();
+
+    if (data.error || data.statusCode >= 400) {
+      throw { ...data, request };
+    }
 
     return data;
   }
