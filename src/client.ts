@@ -146,18 +146,21 @@ Conflicts with: connection_id, email
       ttl_sec: params.ttlSec ?? 0,
       mark_email_as_verified: true,
     };
-    const tikectResponse = await fetch(`https://${this.domain}/api/v2/users`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: 'Bearer ' + this.accessToken,
+    const tikectResponse = await fetch(
+      `https://${this.domain}/api/v2/tickets/password-change`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify(request),
       },
-      body: JSON.stringify(request),
-    });
+    );
     const data = await tikectResponse.json();
 
     if (data.error || data.statusCode >= 400) {
-      throw { ...data, request };
+      throw data;
     }
 
     return data;
