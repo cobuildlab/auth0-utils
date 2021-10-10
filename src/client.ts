@@ -131,7 +131,7 @@ Conflicts with: connection_id, email
     resultUrl?: string;
     ttlSec?: number;
     clientId?: string;
-  }): Promise<unknown> {
+  }): Promise<{ ticket: string }> {
     await this.setupAccesToken();
 
     if (!this.accessToken) {
