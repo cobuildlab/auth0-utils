@@ -106,6 +106,10 @@ class Auth0Client {
 
     const user = await userResponse.json();
 
+    if (user.error || user.statusCode >= 400) {
+      throw user;
+    }
+
     return user;
   }
 
