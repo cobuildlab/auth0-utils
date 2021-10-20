@@ -1,7 +1,0 @@
-#React
-node_modules
-build
-public
-template
-pages/index.tsx
-*.test.*
