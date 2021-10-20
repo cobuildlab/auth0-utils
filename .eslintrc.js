@@ -8,7 +8,7 @@ module.exports = {
     'plugin:jsdoc/recommended',
     'eslint-config-prettier',
   ],
-  ignorePatterns: ['lib/**/*.js.', 'lib/*.js'],
+  ignorePatterns: ['lib/**/*.js.', 'lib/*.js', 'example/**/*.js.'],
   env: {
     node: true,
     es6: true,
