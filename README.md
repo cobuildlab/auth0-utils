@@ -26,7 +26,7 @@ const auth0Client = createAuth0Client({
 });
 ```
 
-Then before using the client it need to be setup
+Then you can use any of the methods
 
 ```ts
 // Creates a user with their email and database connection to save it
@@ -35,3 +35,22 @@ const auth0User = auth0Client.createAuth0User(
   'Username-Password-Authentication',
 );
 ```
+
+```ts
+// Creates a user with their email and database connection to save it
+const auth0User = auth0Client.deleteUser('auth0|C61704df6c69eb200705238e5');
+```
+
+## Contribute to this package
+
+You can contribute to this project cloning this repository then install
+
+```sh
+$ npm install
+```
+
+In the `example` directory inside this project there is a small node js app that imports this library
+You can use the example app to test you features and fixes during the development process
+
+1. First make the build with `npm run build` at the root to build de package.
+2. Then you can `npm run build && node lib/index.js` to build and execute the node script to test the package.
