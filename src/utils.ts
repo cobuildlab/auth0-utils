@@ -1,5 +1,5 @@
 import { AccessTokenAuth0 } from './types';
-import fetch from 'node-fetch';
+import fetch, { Response as NodeFetchRespose } from 'node-fetch';
 import { nanoid } from 'nanoid';
 
 /**
@@ -198,14 +198,17 @@ export const updateAuth0User = async (
   let userResponse;
 
   try {
-    userResponse = await fetch(`https://${auth_domain}/api/v2/users/${user_id}`, {
-      method: 'PATCH',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: 'Bearer ' + access_token,
+    userResponse = await fetch(
+      `https://${auth_domain}/api/v2/users/${user_id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + access_token,
+        },
+        body: JSON.stringify(data),
       },
-      body: JSON.stringify(data),
-    });
+    );
   } catch (error) {
     console.log('ERROR UPDATING AUTH0 USER \n', error);
     throw new Error(error);
@@ -222,3 +225,21 @@ export const updateAuth0User = async (
   console.log('User auth0 Update Success', userResponse);
   return userResponse;
 };
+
+/**
+ * @param promise - Input promise.
+ * @returns Promise Result.
+ */
+export async function hanldeFetch<T>(
+  promise: Promise<Response> | Promise<NodeFetchRespose>,
+): Promise<T> {
+  const result = await promise;
+
+  const data = await result.json();
+
+  if (data.error || data.statusCode >= 400) {
+    throw data;
+  }
+
+  return data;
+}
