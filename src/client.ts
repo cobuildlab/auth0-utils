@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
+import { hanldeFetch } from './utils';
 
 type Auth0ClientParams = {
   domain: string;
@@ -90,27 +91,23 @@ class Auth0Client {
       throw new Error('No valid access token');
     }
 
-    const userResponse = await fetch(`https://${this.domain}/api/v2/users`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: 'Bearer ' + this.accessToken,
-      },
-      body: JSON.stringify({
-        email,
-        password: `*${password}*`,
-        connection: connection,
-        verify_email: options?.sendVerificationEmail ?? false,
+    const userResponse = await hanldeFetch<Auth0User>(
+      fetch(`https://${this.domain}/api/v2/users`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify({
+          email,
+          password: `*${password}*`,
+          connection: connection,
+          verify_email: options?.sendVerificationEmail ?? false,
+        }),
       }),
-    });
+    );
 
-    const user = await userResponse.json();
-
-    if (user.error || user.statusCode >= 400) {
-      throw user;
-    }
-
-    return user;
+    return userResponse;
   }
 
   /**.
@@ -150,24 +147,89 @@ Conflicts with: connection_id, email
       ttl_sec: params.ttlSec ?? 0,
       mark_email_as_verified: true,
     };
-    const tikectResponse = await fetch(
-      `https://${this.domain}/api/v2/tickets/password-change`,
-      {
+    const tikectResponse = await hanldeFetch<{ ticket: string }>(
+      fetch(`https://${this.domain}/api/v2/tickets/password-change`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
           Authorization: 'Bearer ' + this.accessToken,
         },
         body: JSON.stringify(request),
+      }),
+    );
+
+    return tikectResponse;
+  }
+  /**.
+   * GET	/api/v2/users
+   * this method need the following scopes from the M2M acces token "read:users, read:user_idp_tokens"
+    - Specify a search criteria for users
+    - Sort the users to be returned
+    - Select the fields to be returned
+    - Specify the number of users to retrieve per page and the page index.
+   
+    The q query parameter can be used to get users that match the specified criteria using query string syntax.
+   
+    Learn more about searching for users.
+    See https://auth0.com/docs/users/user-search/user-search-query-syntax
+   *
+   * @param params - Params.
+   * @param params.page - Page of the records.
+   * @param params.perPage - Size of the response.
+   * @param params.query - Query string to filter the users.
+   * @returns A list of users.
+   */
+  async getUserList(params?: {
+    page?: number;
+    perPage?: number;
+    query?: string;
+  }): Promise<Auth0User[]> {
+    const { page = 1, perPage = 10, query } = params || {};
+
+    await this.setupAccesToken();
+    const urlAppend = query
+      ? `page=${page}&per_page=${perPage}&q=${query}`
+      : `page=${page}&per_page=${perPage}`;
+    const fullUrl = `https://${this.domain}/api/v2/users?${urlAppend}`;
+
+    const usersResponse = await hanldeFetch<Auth0User[]>(
+      fetch(fullUrl, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+      }),
+    );
+
+    return usersResponse;
+  }
+  /**.
+   *DELETE	/api/v2/users/{id}
+    Delete a user.
+   
+   * This method need the following scopes from the M2M acces token "delete:users"
+   *
+   * @param id - Id of the user.
+   * @returns Success response.
+   */
+  async deleteUser(id: string): Promise<Response> {
+    await this.setupAccesToken();
+
+    const usersResponse = await fetch(
+      `https://${this.domain}/api/v2/users/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
       },
     );
-    const data = await tikectResponse.json();
-
-    if (data.error || data.statusCode >= 400) {
-      throw data;
+    if (!(usersResponse.status >= 200 && usersResponse.status <= 299)) {
+      throw new Error('Fail to delete user');
     }
-
-    return data;
+    return usersResponse;
   }
 }
 

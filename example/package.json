@@ -1,0 +1,39 @@
+{
+  "name": "@cobuildlab/test-app-auth0-utils",
+  "version": "1.0.0",
+  "description": "Test app for auth0 utils",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "test": "jest"
+  },
+  "author": "Gressia",
+  "license": "ISC",
+  "dependencies": {
+    "@cobuildlab/auth0-utils": "file:..",
+    "dotenv": "^10.0.0",
+    "jest": "^26.6.3",
+    "typescript": "^4.2.4"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/(build|node_modules)/"
+    ],
+    "testRegex": [
+      ".test.ts$",
+      ".test.tsx$"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.0.2"
+  }
+}
