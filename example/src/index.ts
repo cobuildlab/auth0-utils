@@ -13,12 +13,13 @@ const auth0 = createAuth0Client({
 });
 
 auth0
-  .deleteUser('auth0|61704df6c69eb200705238e5')
+  .changePassword('poipeweutrama-7570@yopmail.com', 'test@1234')
   .then((data) => {
     console.log('susccess');
     console.log(JSON.stringify(data, null, 2));
   })
   .catch((error) => {
+    console.log(auth0.changePassword);
     console.log('error');
     console.log(JSON.stringify(error, null, 2));
   });

@@ -231,6 +231,46 @@ Conflicts with: connection_id, email
     }
     return usersResponse;
   }
+  /**.
+   *PACH	/api/v2/users/USER_ID
+    Change password a user.
+   
+   * This method need the following scopes from the M2M acces token "update:users" & "update:users_app_metadata"
+   *
+   * @param email - Email of the user.
+   * @param password - New password.
+   * @returns {Auth0User} The id of the user to be blocked.
+   */
+  async changePassword(email: string, password: string): Promise<Auth0User> {
+    await this.setupAccesToken();
+    const searchUser = await hanldeFetch<Auth0User[]>(
+      fetch(
+        `https://${this.domain}/api/v2/users?q=email%3A${email}&search_engine=v3`,
+        {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + this.accessToken,
+          },
+        },
+      ),
+    );
+    const { user_id } = searchUser[0];
+    const usersResponse = await hanldeFetch<Auth0User>(
+      fetch(`https://${this.domain}/api/v2/users/${user_id}`, {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify({
+          password: password,
+          connection: 'Username-Password-Authentication',
+        }),
+      }),
+    );
+    return usersResponse;
+  }
 }
 
 /**
