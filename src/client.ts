@@ -232,7 +232,7 @@ Conflicts with: connection_id, email
     return usersResponse;
   }
   /**.
-   *PACH	/api/v2/users/USER_ID
+   *PATCH	/api/v2/users/USER_ID
     Change password a user.
    
    * This method need the following scopes from the M2M acces token "update:users" & "update:users_app_metadata"
