@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import fetch, { Response } from 'node-fetch';
+import { AccessTokenAuth0 } from './types';
 import { hanldeFetch } from './utils';
 
 type Auth0ClientParams = {
@@ -270,6 +271,42 @@ Conflicts with: connection_id, email
       }),
     );
     return usersResponse;
+  }
+
+  /**.
+   * Check user password.
+   *
+   * @param email - Email of the user.
+   * @param password - New password.
+   * @returns {AccessTokenAuth0} The id of the user to be blocked.
+   */
+  async checkPassword(email: string, password: string): Promise<AccessTokenAuth0> {
+    await this.setupAccesToken();
+
+    const authenticateUserInput = {
+      grant_type: 'password',
+      password: password,
+      client_id: this.clientId,
+      client_secret: this.clienSecret,
+      username: email,
+      audience: `https://${this.domain}/api/v2/`,
+      scope: 'profile email',
+    };
+
+    const userTokenResponse = await hanldeFetch<AccessTokenAuth0>(
+      fetch(
+        `https://${this.domain}/oauth/token`,
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(authenticateUserInput),
+        },
+      ),
+    );
+    
+    return userTokenResponse;
   }
 }
 
