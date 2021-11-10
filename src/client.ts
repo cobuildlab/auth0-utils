@@ -276,11 +276,13 @@ Conflicts with: connection_id, email
   /**.
    * Check user password.
    *
+   * This method requires that the m2m application have "password" as a valid grant. 
+   *  
    * @param email - Email of the user.
    * @param password - New password.
-   * @returns {AccessTokenAuth0} The id of the user to be blocked.
+   * @returns {boolean} If is valid password.
    */
-  async checkPassword(email: string, password: string): Promise<AccessTokenAuth0> {
+  async checkUserPassword(email: string, password: string): Promise<boolean> {
     await this.setupAccesToken();
 
     const authenticateUserInput = {
@@ -293,20 +295,27 @@ Conflicts with: connection_id, email
       scope: 'profile email',
     };
 
-    const userTokenResponse = await hanldeFetch<AccessTokenAuth0>(
-      fetch(
-        `https://${this.domain}/oauth/token`,
-        {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(authenticateUserInput),
+    const response = await fetch(
+      `https://${this.domain}/oauth/token`,
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ),
+        body: JSON.stringify(authenticateUserInput),
+      },
     );
-    
-    return userTokenResponse;
+
+    const data = await response.json();
+
+    if(!response.ok && response.status !== 403) {
+      throw data;
+    } else if (response.status === 403){
+      return false;
+    } else {
+      return true;
+    }
+
   }
 }
 
