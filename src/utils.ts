@@ -237,8 +237,8 @@ export async function hanldeFetch<T>(
 
   const data = await result.json();
 
-  if (data.error || data.statusCode >= 400) {
-    throw data;
+  if (data.error || data.statusCode >= 400 || !result.ok || result.status >= 400) {
+    throw {...data, status: result.status};
   }
 
   return data;
