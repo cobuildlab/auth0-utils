@@ -246,7 +246,7 @@ Conflicts with: connection_id, email
     await this.setupAccesToken();
     const searchUser = await hanldeFetch<Auth0User[]>(
       fetch(
-        `https://${this.domain}/api/v2/users?q=email%3A${email}&search_engine=v3`,
+        `https://${this.domain}/api/v2/users-by-email?email=${email}`,
         {
           method: 'GET',
           headers: {
@@ -266,7 +266,6 @@ Conflicts with: connection_id, email
         },
         body: JSON.stringify({
           password: password,
-          connection: 'Username-Password-Authentication',
         }),
       }),
     );
