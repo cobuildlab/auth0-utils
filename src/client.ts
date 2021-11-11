@@ -280,9 +280,9 @@ Conflicts with: connection_id, email
    *  
    * @param email - Email of the user.
    * @param password - New password.
-   * @returns {boolean} If is valid password.
+   * @returns {boolean} Boolean If are valid password.
    */
-  async checkUserPassword(email: string, password: string): Promise<boolean> {
+  async validateUserCredentials(email: string, password: string): Promise<boolean> {
     await this.setupAccesToken();
 
     const authenticateUserInput = {
