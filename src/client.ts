@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import fetch, { Response } from 'node-fetch';
+import { AccessTokenAuth0 } from './types';
 import { hanldeFetch } from './utils';
 
 type Auth0ClientParams = {
@@ -270,6 +271,51 @@ Conflicts with: connection_id, email
       }),
     );
     return usersResponse;
+  }
+
+  /**.
+   * Check user password.
+   *
+   * This method requires that the m2m application have "password" as a valid grant. 
+   *  
+   * @param email - Email of the user.
+   * @param password - New password.
+   * @returns {boolean} Boolean If are valid password.
+   */
+  async validateUserCredentials(email: string, password: string): Promise<boolean> {
+    await this.setupAccesToken();
+
+    const authenticateUserInput = {
+      grant_type: 'password',
+      password: password,
+      client_id: this.clientId,
+      client_secret: this.clienSecret,
+      username: email,
+      audience: `https://${this.domain}/api/v2/`,
+      scope: 'profile email',
+    };
+
+    const response = await fetch(
+      `https://${this.domain}/oauth/token`,
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(authenticateUserInput),
+      },
+    );
+
+    const data = await response.json();
+
+    if(!response.ok && response.status !== 403) {
+      throw data;
+    } else if (response.status === 403){
+      return false;
+    } else {
+      return true;
+    }
+
   }
 }
 

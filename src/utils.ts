@@ -243,3 +243,65 @@ export async function hanldeFetch<T>(
 
   return data;
 }
+
+/**
+ * This action updates an auth0 user.
+ *
+ * @param {string} fetchTokenUrl - Token url.
+ * @param {string} username - Username or email.
+ * @param {string} password - Current user password.
+ * @param {Object} auth0Audience - Audience.
+ * @param {string} auth0MachineClientId - Cliend id required.
+ * @param {string} auth0MachineSecret - Secret Cliend id required.
+ * @param {Object} scope - Data to be updated.
+ * @returns {Promise<any>} - Success data if user is updated.
+ * @private
+ */
+export const fetchUserToken = async (
+  fetchTokenUrl: string,
+  username: string,
+  password: string,
+  auth0Audience: string,
+  auth0MachineClientId: string,
+  auth0MachineSecret: string,
+  scope = 'profile email'
+): Promise<AccessTokenAuth0> => {
+  if (fetchTokenUrl === undefined)
+    throw new Error('fetchTokenUrl is undefined');
+
+  let response;
+  try {
+    response = await fetch(fetchTokenUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        audience: auth0Audience,
+        grant_type: 'password',
+        password,
+        username,
+        client_id: auth0MachineClientId,
+        client_secret: auth0MachineSecret,
+        scope
+      }),
+    });
+  
+  } catch (error) {
+    console.log('authActionError', error);
+    throw new Error(error);
+  }
+
+
+  if(response.status === 403) {
+    throw { message: 'Invalid password or email', status: 403};
+  } else if (!response.ok) {
+    throw new Error('Failed to get token');
+  }
+
+  const authResponse = await response.json();
+  if (!authResponse.access_token) {
+    console.log('accessTokenError', authResponse);
+    throw new Error('There was a problem with the access token');
+  }
+  
+  return authResponse;
+};
