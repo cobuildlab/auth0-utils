@@ -246,7 +246,9 @@ Conflicts with: connection_id, email
     await this.setupAccesToken();
     const searchUser = await hanldeFetch<Auth0User[]>(
       fetch(
-        `https://${this.domain}/api/v2/users-by-email?email=${email}`,
+        `https://${this.domain}/api/v2/users-by-email?${new URLSearchParams({
+          email,
+        }).toString()}`,
         {
           method: 'GET',
           headers: {
