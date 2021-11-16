@@ -266,7 +266,7 @@ Conflicts with: connection_id, email
    *PATCH	/api/v2/users/USER_ID
     Change password a user.
    
-   * This method need the following scopes from the M2M acces token "update:users" & "update:users_app_metadata"
+   * This method need the following scopes from the M2M acces token "read:users", "update:users" & "update:users_app_metadata"
    *
    * @param email - Email of the user.
    * @param password - New password.
