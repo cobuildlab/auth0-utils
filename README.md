@@ -37,7 +37,12 @@ const auth0User = auth0Client.createAuth0User(
 ```
 
 ```ts
-// Creates a user with their email and database connection to save it
+// Retrives a user by their email
+const auth0User = auth0Client.getUserByEmail('test-user@test-mail.com');
+```
+
+```ts
+// Deletes a user by its auth0 id
 const auth0User = auth0Client.deleteUser('auth0|C61704df6c69eb200705238e5');
 ```
 
