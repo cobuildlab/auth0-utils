@@ -232,6 +232,36 @@ Conflicts with: connection_id, email
     }
     return usersResponse;
   }
+
+  /**.
+  * GET	/api/v2/users-by-email
+   Get user by its email.
+   
+   * This method need the following scopes from the M2M acces token "read:users" 
+   *
+   * @param email - Email of the user.
+   * @returns {Auth0User} The user.
+   */
+  async getUserByEmail(email: string): Promise<Auth0User> {
+    await this.setupAccesToken();
+    const searchUser = await hanldeFetch<Auth0User[]>(
+      fetch(
+        `https://${this.domain}/api/v2/users-by-email?${new URLSearchParams({
+          email,
+        }).toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'content-type': 'application/json',
+            Authorization: 'Bearer ' + this.accessToken,
+          },
+        },
+      ),
+    );
+    const user = searchUser[0];
+
+    return user;
+  }
   /**.
    *PATCH	/api/v2/users/USER_ID
     Change password a user.
@@ -277,13 +307,16 @@ Conflicts with: connection_id, email
   /**.
    * Check user password.
    *
-   * This method requires that the m2m application have "password" as a valid grant. 
-   *  
+   * This method requires that the m2m application have "password" as a valid grant.
+   *
    * @param email - Email of the user.
    * @param password - New password.
    * @returns {boolean} Boolean If are valid password.
    */
-  async validateUserCredentials(email: string, password: string): Promise<boolean> {
+  async validateUserCredentials(
+    email: string,
+    password: string,
+  ): Promise<boolean> {
     await this.setupAccesToken();
 
     const authenticateUserInput = {
@@ -296,27 +329,23 @@ Conflicts with: connection_id, email
       scope: 'profile email',
     };
 
-    const response = await fetch(
-      `https://${this.domain}/oauth/token`,
-      {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(authenticateUserInput),
+    const response = await fetch(`https://${this.domain}/oauth/token`, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify(authenticateUserInput),
+    });
 
     const data = await response.json();
 
-    if(!response.ok && response.status !== 403) {
+    if (!response.ok && response.status !== 403) {
       throw data;
-    } else if (response.status === 403){
+    } else if (response.status === 403) {
       return false;
     } else {
       return true;
     }
-
   }
 }
 
