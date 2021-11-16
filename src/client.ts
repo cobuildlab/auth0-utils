@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid';
 import fetch, { Response } from 'node-fetch';
-import { AccessTokenAuth0 } from './types';
 import { hanldeFetch } from './utils';
 
 type Auth0ClientParams = {
@@ -9,7 +8,7 @@ type Auth0ClientParams = {
   clienSecret: string;
 };
 
-type Auth0User = {
+export type Auth0User = {
   created_at: string;
   email: string;
   email_verified: false;
@@ -68,6 +67,36 @@ class Auth0Client {
     }
   }
 
+  /**.
+   * This function creates a user in  the auth0 database if the users already exits it fetch it and return it.
+   * this method need the following scopes from the M2M acces token "create:users" & "read:users"
+   *
+   * @param email - User email.
+   * @param connection - Database connection on Auth0.
+   * @param options - options
+   * @param options.sendVerificationEmail - if should send a verification email.
+   * @returns User.
+   */
+  async createOrReturnUser(
+    email: string,
+    connection: string,
+    options?: {
+      sendVerificationEmail: boolean;
+    },
+  ): Promise<Auth0User> {
+    try {
+      const user = await this.createAuth0User(email, connection, options);
+      return user;
+    } catch (error) {
+      if (JSON.stringify(error).includes('The user already exists')) {
+        const user = await this.getUserByEmail(email);
+
+        return user;
+      }
+
+      throw error;
+    }
+  }
   /**.
    * This function creates a user in  the auth0 database.
    * this method need the following scopes from the M2M acces token "create:users"
