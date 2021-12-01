@@ -40,7 +40,10 @@ export const createAuth0User = async (
     });
   } catch (error) {
     console.log('ERROR CREATING AUTH0 USER \n', error);
-    throw new Error(error);
+    if (typeof error === 'string') {
+      throw new Error(error);
+    }
+    throw error;
   }
 
   userResponse = await userResponse.json();
@@ -79,10 +82,13 @@ export const fetchUserByEmailOnAuth0 = async (
         Authorization: `${token_type} ${access_token}`,
       },
     });
-    return (await userResponse.json())[0].user_id;
+
+    const user = ((await userResponse.json()) as [{ user_id: string }])[0];
+
+    return user.user_id;
   } catch (error) {
     console.log('ERROR FECHING USER \n', error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -115,15 +121,16 @@ export const fetchAccessTokenOnAuth0 = async (
         client_secret: auth0MachineSecret,
       }),
     });
-    const authResponse = await response.json();
+    const authResponse = (await response.json()) as AccessTokenAuth0;
     if (!authResponse.access_token) {
       console.log('accessTokenError', authResponse);
       throw new Error('There was a problem with the access token');
     }
+
     return authResponse;
   } catch (error) {
     console.log('authActionError', error);
-    throw new Error(error);
+    throw error;
   }
 };
 
@@ -211,7 +218,7 @@ export const updateAuth0User = async (
     );
   } catch (error) {
     console.log('ERROR UPDATING AUTH0 USER \n', error);
-    throw new Error(error);
+    throw error;
   }
 
   userResponse = await userResponse.json();
@@ -264,7 +271,7 @@ export const fetchUserToken = async (
   auth0Audience: string,
   auth0MachineClientId: string,
   auth0MachineSecret: string,
-  scope = 'profile email'
+  scope = 'profile email',
 ): Promise<AccessTokenAuth0> => {
   if (fetchTokenUrl === undefined)
     throw new Error('fetchTokenUrl is undefined');
@@ -281,27 +288,25 @@ export const fetchUserToken = async (
         username,
         client_id: auth0MachineClientId,
         client_secret: auth0MachineSecret,
-        scope
+        scope,
       }),
     });
-  
   } catch (error) {
     console.log('authActionError', error);
-    throw new Error(error);
+    throw error;
   }
 
-
-  if(response.status === 403) {
-    throw { message: 'Invalid password or email', status: 403};
+  if (response.status === 403) {
+    throw { message: 'Invalid password or email', status: 403 };
   } else if (!response.ok) {
     throw new Error('Failed to get token');
   }
 
-  const authResponse = await response.json();
+  const authResponse = (await response.json()) as AccessTokenAuth0;
   if (!authResponse.access_token) {
     console.log('accessTokenError', authResponse);
     throw new Error('There was a problem with the access token');
   }
-  
+
   return authResponse;
 };
