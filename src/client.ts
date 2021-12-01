@@ -61,7 +61,7 @@ class Auth0Client {
           client_secret: this.clienSecret,
         }),
       });
-      const authResponse = await response.json();
+      const authResponse = (await response.json()) as { access_token: string };
 
       if (!authResponse.access_token) {
         console.log('accessTokenError', authResponse);
