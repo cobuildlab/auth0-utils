@@ -1,9 +1,10 @@
 {
   "name": "@cobuildlab/auth0-utils",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "This is package to deal with common scenarios working with auth0 platform",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
+  "type": "module",
   "scripts": {
     "test": "jest --collect-coverage --passWithNoTests",
     "build": "tsc",
