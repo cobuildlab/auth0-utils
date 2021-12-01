@@ -6,4 +6,9 @@ export {
   sendAuth0EmailVerification,
 } from './utils';
 
-export { createAuth0Client } from './client';
+export {
+  createAuth0Client,
+  Auth0User,
+  SendVerificationEmailResponse,
+  Auth0ClientParams,
+} from './client';

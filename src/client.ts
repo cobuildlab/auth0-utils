@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import fetch, { Response } from 'node-fetch';
 import { hanldeFetch } from './utils';
 
-type Auth0ClientParams = {
+export type Auth0ClientParams = {
   domain: string;
   clientId: string;
   clienSecret: string;
@@ -25,6 +25,13 @@ export type Auth0User = {
   picture: string;
   updated_at: string;
   user_id: string;
+};
+
+export type SendVerificationEmailResponse = {
+  type: string;
+  status: string;
+  created_at: string;
+  id: string;
 };
 
 class Auth0Client {
@@ -96,6 +103,36 @@ class Auth0Client {
 
       throw error;
     }
+  }
+  /**.
+   *
+   * This function send a verification email to the .
+   * This method need the following scopes from the M2M acces token "update:users".
+   *
+   * If you want to change the "redirect to url" please check this doc.
+   * https://auth0.com/docs/brand-and-customize/email/customize-email-templates#configuring-the-redirect-to-url
+   *
+   * @param userId - The ID of the user.
+   * @returns Response of the email sent.
+   */
+  async sendAuth0EmailVerification(
+    userId: string,
+  ): Promise<SendVerificationEmailResponse> {
+    await this.setupAccesToken();
+
+    return await hanldeFetch<SendVerificationEmailResponse>(
+      fetch(`https://${this.domain}/api/v2/jobs/verification-email`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          client_id: this.clientId,
+        }),
+      }),
+    );
   }
   /**.
    * This function creates a user in  the auth0 database.
