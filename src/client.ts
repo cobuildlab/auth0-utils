@@ -413,6 +413,27 @@ Conflicts with: connection_id, email
       return true;
     }
   }
+  /**.
+   * @param id - Email of the user.
+   * @param info - New info.
+   * @returns {Auth0User} User Update Response.
+   */
+  async updateUserData(id: string, info: Auth0User): Promise<Auth0User> {
+    await this.setupAccesToken();
+
+    const response = await hanldeFetch<Auth0User>(
+      fetch(`https://${this.domain}/api/v2/users/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify(info),
+      }),
+    );
+
+    return response;
+  }
 }
 
 /**
