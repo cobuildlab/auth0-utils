@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import fetch, { Response } from 'node-fetch';
+import { Auth0UserUpdate } from './types';
 import { hanldeFetch } from './utils';
 
 export type Auth0ClientParams = {
@@ -418,7 +419,7 @@ Conflicts with: connection_id, email
    * @param info - New info.
    * @returns {Auth0User} User Update Response.
    */
-  async updateUserData(id: string, info: Auth0User): Promise<Auth0User> {
+  async updateUserData(id: string, info: Auth0UserUpdate): Promise<Auth0User> {
     await this.setupAccesToken();
 
     const response = await hanldeFetch<Auth0User>(
