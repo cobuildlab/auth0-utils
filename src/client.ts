@@ -179,6 +179,51 @@ class Auth0Client {
   }
 
   /**.
+   * This function creates a user in  the auth0 database.
+   *  This method need the following scopes from the M2M acces token "create:users"
+   * 
+   * @param params - Params
+   * @param params.email - User email.
+   * @param params.password - USer Password.
+   * @param params.connection - Database connection on Auth0.
+   * @param params.options -  Params options. 
+   * @param params.options.sendVerificationEmail - if should send a verification email.
+   * @returns User.
+   */
+  async createAuth0UserWithEmailAndPassword(params: {
+    email: string,
+    password: string,
+    connection: string,
+    options?: {
+      sendVerificationEmail: boolean;
+    },
+  }): Promise<Auth0User>{
+    await this.setupAccesToken();
+
+    if (!this.accessToken) {
+      throw new Error('No valid access token');
+    }
+
+    const userResponse = await hanldeFetch<Auth0User>(
+      fetch(`https://${this.domain}/api/v2/users`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.accessToken,
+        },
+        body: JSON.stringify({
+          email: params.email,
+          password: params.password,
+          connection: params.connection,
+          verify_email: params.options?.sendVerificationEmail ?? false,
+        }),
+      }),
+    );
+
+    return userResponse;
+  }
+
+  /**.
    * This method returs a link for the user to reset the password.
    * this method need the following scopes from the M2M acces token "create:user_tickets"
    * @param params - User email.
